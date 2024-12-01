@@ -17,7 +17,6 @@ int selection = 0;
 float change_needed = 0;
 float inserted_money = 0;
 int coin_quantity[] = {10, 20, 20};
-bool enough_money = false;
 float product_price = 0;
 float balance = 50;
 int product_quantities[] = {5, 5, 5, 5, 5, 5, 5, 5};
