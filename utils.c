@@ -9,7 +9,7 @@ void type_effect(const char *text) {
     while (*text) {
         printf("%c", *text++);
         fflush(stdout);
-        usleep(1000);
+        usleep(25000);
     }
 }
 int get_random_between(int min, int max) {
