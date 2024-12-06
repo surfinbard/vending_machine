@@ -22,9 +22,13 @@ Don't ask me what currency this is in. I don't know either.
         Notifies the user when a product is out of stock.
 
 ### State Transitions:
-        Implements a state machine for smooth transitions between different operations (e.g., selection, payment, dispensing):
+        Implements a state machine for smooth transitions between different operations (e.g., selection, payment, dispensing).
+        
+        
+<p align="center">
+  <img src="FSM.gif">
+</p>
 
-![Graphical representation of the finite state machine implemented by the code.](FSM.gif)
 
 ## How to Run
 
