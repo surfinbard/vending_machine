@@ -5,29 +5,28 @@
 #include "utils.c"
 
 int item_selection();
-void product_not_available();
+void out_of_stock();
 void insert_money();
 int check_if_coins_available(int length, int options[][3]);
-void change_required();
+void check_balance();
 void refund();
 void drop_change();
 void drop_product();
 
-int selection = 0;
-float change_needed = 0;
 float inserted_money = 0;
-int coin_quantity[] = {10, 20, 20};
 float product_price = 0;
+float change_needed = 0;
 float balance = 50;
+int selection = 0;
+int pieces[3] = {0, 0, 0};
+int coin_quantity[] = {10, 20, 20};
+int product_sales[] = {0, 0, 0, 0, 0, 0, 0, 0};
 int product_quantities[] = {5, 5, 5, 5, 5, 5, 5, 5};
+float product_prices[] = {3.5, 3, 1.5, 2, 1, 0.5, 4.5, 4};
 char *product_names[] = {"COKE",           "PEPSI",       "FANTA",
                          "SPRITE",         "CUP NOODLES", "TOP RAMEN",
                          "BULDAK NOODLES", "KINDER BUENO"};
-int product_sales[] = {0, 0, 0, 0, 0, 0, 0, 0};
-float product_prices[] = {3.5, 3, 1.5, 2, 1, 0.5, 4.5, 4};
-int pieces[3] = {0, 0, 0};
 
-// q0 -> q1
 int item_selection() {
     int selection_type;
     int selection;
@@ -62,11 +61,12 @@ int item_selection() {
                 printf("Selected %d: %s ($%.2f)\n", selection,
                        product_names[selection], product_prices[selection]);
 
+                // check_stock
                 if (product_quantities[selection] > 0) {
                     product_price = product_prices[selection];
                     insert_money();
                 } else
-                    product_not_available();
+                    out_of_stock();
 
                 return 0;
             } else if (selection_type == 1) {
@@ -86,8 +86,10 @@ int item_selection() {
                             printf("Selected %d: %s ($%.2f)\n", selection,
                                    product_names[selection],
                                    product_prices[selection]);
+
+                            // check_stock
                             if (product_quantities[selection] == 0)
-                                product_not_available();
+                                out_of_stock();
                             else {
                                 product_price = product_prices[selection];
                                 insert_money();
@@ -103,17 +105,13 @@ int item_selection() {
     return -1;
 }
 
-// q1 -> q0
-void product_not_available() {
+void out_of_stock() {
     printf("Selection not available.");
     selection = 0;
     product_price = 0;
+    item_selection();
 }
 
-// q1 -> q2
-// q2 -> q2
-// q2 -> q3
-// q1 -> q3
 void insert_money() {
     float amount;
     printf("\nINSERT MONEY\n");
@@ -136,16 +134,14 @@ void insert_money() {
                 inserted_money += amount;
 
                 if (inserted_money >= product_price) {
-                    // q3 -> q4
+                    // calc_change
                     if (inserted_money > product_price) {
                         change_needed = inserted_money - product_price;
                         printf("Amount inserted: $%.2f / $%.2f\n",
                                inserted_money, product_price);
                         sleep(1);
-                        change_required();
-                    }
-                    // q3 -> q5
-                    else
+                        check_balance();
+                    } else
                         drop_product();
                 }
             }
@@ -153,7 +149,6 @@ void insert_money() {
     }
 }
 
-// q3 -> q5
 int check_if_coins_available(int length, int options[][3]) {
     for (int i = 0; i < length; i++) {
         if (coin_quantity[0] >= options[i][0] &&
@@ -164,19 +159,15 @@ int check_if_coins_available(int length, int options[][3]) {
     return -1;
 }
 
-// q5 -> q6
-// q5 -> q7
-void change_required() {
+void check_balance() {
     int option = -1;
 
-    // q5 -> q6
     if ((balance - change_needed) < 0) {
         printf("\nNo change available. Please insert exact amount.\n");
         refund();
         return;
     }
 
-    // q5 -> q7
     int change_needed_integer = change_needed * 100;
     switch (change_needed_integer) {
         case 450:
@@ -267,10 +258,9 @@ void change_required() {
             }
             break;
     }
+    if (option == -1) refund();
 }
 
-// q6 -> q0
-// q10 -> q0
 void refund() {
     printf("Refund in order. Please wait...\n");
     printf("REFUNDING %.2f\n\n", inserted_money);
@@ -281,7 +271,6 @@ void refund() {
     item_selection();
 }
 
-// q8 -> q9
 void drop_change() {
     char message[100] = "RETURNING CHANGE: ";
     int first = 1;
@@ -311,8 +300,6 @@ void drop_change() {
     drop_product();
 }
 
-// q4 -> q0
-// q9 -> q0
 void drop_product() {
     printf("ENJOY YOUR %s\n\n", product_names[selection]);
     printf("----><----THANK YOU----><----\n");
