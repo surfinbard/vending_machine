@@ -24,7 +24,7 @@ Don't ask me what currency this is in. I don't know either.
 ### State Transitions:
         Implements a state machine for smooth transitions between different operations (e.g., selection, payment, dispensing):
 
-![Graphical representation of the finite state machine implemented by the code.](img/FSM.gif)
+![Graphical representation of the finite state machine implemented by the code.](FSM.gif)
 
 ## How to Run
 
